@@ -1,6 +1,6 @@
 {
   "ds": "obj3d128",
-  "root": "/mnt/data/tal/obj3d/",
+  "root": "/media/tim/D/obj3d/",
   "device": "cuda",
   "batch_size": 4,
   "lr": 0.0002,

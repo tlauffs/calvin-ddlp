@@ -209,15 +209,29 @@ class FgDLP(nn.Module):
         mu_tot = z_base + mu_offset
         logvar_tot = logvar_offset
 
+        # print('AAA:', lobj_on_a)
+        # print('BBB:', lobj_on_b)
+
         obj_on_a = lobj_on_a.exp().clamp_min(1e-5)
         obj_on_b = lobj_on_b.exp().clamp_min(1e-5)
-        # if torch.isnan(obj_on_a).any():
-        #     print(f'obj_on_a has nan')
-        #     # torch.nan_to_num_(obj_on_a, nan=0.01)
-        # if torch.isnan(obj_on_b).any():
-        #     print(f'obj_on_b has nan')
-        #     raise SystemError('NaNs detected')
-        #     # torch.nan_to_num_(obj_on_b, nan=0.01)
+
+
+        # nans sometings detechted ????? 
+        if torch.isnan(obj_on_a).any():
+            # print(f'obj_on_a has nan')
+            # torch.nan_to_num(obj_on_a, nan=0.01)
+            obj_on_a[torch.isnan(obj_on_a)] = 0.01
+            print('NAN error  on  a')
+        if torch.isnan(obj_on_b).any():
+            # print(f'obj_on_b has nan')
+            # torch.nan_to_num(obj_on_b, nan=0.01)
+            obj_on_b[torch.isnan(obj_on_b)] = 0.01
+            print('NAN error  on  b')
+            #raise SystemError('NaNs detected')
+
+        #print('AAA 2:', obj_on_a)
+        #print('BBB 2:', obj_on_a)
+
         # try:
         #     obj_on_beta_dist = torch.distributions.Beta(obj_on_a, obj_on_b)
         # except ValueError:

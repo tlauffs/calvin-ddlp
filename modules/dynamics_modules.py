@@ -498,7 +498,14 @@ class DynamicsDLP(nn.Module):
             # if torch.isnan(obj_on_b).any():
             #     print(f'obj_on_b has nan')
             #     torch.nan_to_num_(obj_on_b, nan=0.01)
+
+            # nans sometings detechted ????? 
+            if torch.isnan(obj_on_a).any():
+                obj_on_a[torch.isnan(obj_on_a)] = 0.01
+            if torch.isnan(obj_on_b).any():
+                obj_on_b[torch.isnan(obj_on_b)] = 0.01            
             beta_dist = Beta(obj_on_a, obj_on_b)
+            
             if deterministic:
                 new_z = mu
                 new_z_depth = mu_depth

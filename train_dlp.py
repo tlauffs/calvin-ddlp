@@ -181,7 +181,8 @@ def train_dlp(config_path='./configs/shapes.json'):
                 # [bs, ch, h, w]
                 x = x.unsqueeze(1)
             x_prior = x  # the input image to the prior is the same as the posterior
-            noisy = (epoch < (warmup_epoch + 1))
+            # noisy = (epoch < (warmup_epoch + 1))
+            noisy = False
             # forward pass
             model_output = model(x, x_prior=x_prior, warmup=(epoch < warmup_epoch), noisy=noisy, bg_masks_from_fg=False,
                                  train_enc_prior=train_enc_prior)
@@ -428,6 +429,6 @@ if __name__ == "__main__":
     if ds.endswith('json'):
         conf_path = ds
     else:
-        conf_path = os.path.join('./configs', f'{ds}.json')
+        conf_path = os.path.join('./configs', f'{ds}-img.json')
 
     train_dlp(conf_path)

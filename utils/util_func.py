@@ -66,14 +66,88 @@ def plot_keypoints_on_image(k, image_tensor, radius=1, thickness=1, kp_range=(0,
     count = 0
     eps = 8
     for co_ord, color in zip(k, cm):
-        c = color.item(0), color.item(1), color.item(2)
-        co_ord = co_ord.squeeze()
-        cv2.circle(img, (int(co_ord[1]), int(co_ord[0])), radius, c, thickness)
-        if plot_numbers:
-            cv2.putText(img, f'{count}', (int(co_ord[1] - eps), int(co_ord[0] - eps)), font, fontScale, c, 2,
-                        cv2.LINE_AA)
-        count += 1
+        try:
+            c = color.item(0), color.item(1), color.item(2)
+            co_ord = co_ord.squeeze()
+            cv2.circle(img, (int(co_ord[1]), int(co_ord[0])), radius, c, thickness)
+            if plot_numbers:
+                cv2.putText(img, f'{count}', (int(co_ord[1] - eps), int(co_ord[0] - eps)), font, fontScale, c, 2,
+                            cv2.LINE_AA)
+            count += 1
+        except:
+            print('nan error')
+    return img
 
+def create_tracked_kp_video(tracked_points, radius=1, thickness=1, kp_range=(0, 1)):
+    video_img_array = []
+    for frame in tracked_points:
+        image_tensor = frame['img']
+        matched_keypoints = frame['kps']
+
+        height, width = image_tensor.size(1), image_tensor.size(2)
+        
+        kp_1 = torch.tensor([kp['kp_1'] for kp in matched_keypoints])
+        kp_2 = torch.tensor([kp['kp_2'] for kp in matched_keypoints])
+
+
+        kp_1 = kp_1.clone()
+        kp_1[:, 0] = ((kp_1[:, 0] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (height - 1)
+        kp_1[:, 1] = ((kp_1[:, 1] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (width - 1)
+        kp_1.round_()
+        kp_1 = kp_1.detach().cpu().numpy()
+
+        kp_2 = kp_2.clone()
+        kp_2[:, 0] = ((kp_2[:, 0] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (height - 1)
+        kp_2[:, 1] = ((kp_2[:, 1] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (width - 1)
+        kp_2.round_()
+        kp_2 = kp_2.detach().cpu().numpy()
+
+        img = transforms.ToPILImage()(image_tensor.cpu())
+        img = np.array(img)
+
+        colors = ([kp['color'] for kp in matched_keypoints])
+        for kp1, kp2, color in zip(kp_1, kp_2, colors):
+            color = tuple(map(int, color))
+            kp_1_coord = (int(kp1[1]), int(kp1[0]))
+            kp_2_coord = (int(kp2[1]), int(kp2[0]))
+            cv2.circle(img, kp_1_coord, radius, color, -1)
+            cv2.circle(img, kp_2_coord, radius, color, -1)
+            cv2.line(img, kp_1_coord, kp_2_coord, color, 1)
+        video_img_array.append(img)
+        
+    return video_img_array
+
+def plot_matched_keypoints(matched_keypoints, image_tensor, radius=1, thickness=1, kp_range=(0, 1)):
+
+    height, width = image_tensor.size(1), image_tensor.size(2)
+    kp_1 = torch.tensor([kp[0] for kp in matched_keypoints])
+    kp_2 = torch.tensor([kp[1] for kp in matched_keypoints])
+
+    num_keypoints = kp_1.size(0)
+
+    kp_1 = kp_1.clone()
+    kp_1[:, 0] = ((kp_1[:, 0] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (height - 1)
+    kp_1[:, 1] = ((kp_1[:, 1] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (width - 1)
+    kp_1.round_()
+    kp_1 = kp_1.detach().cpu().numpy()
+
+    kp_2 = kp_2.clone()
+    kp_2[:, 0] = ((kp_2[:, 0] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (height - 1)
+    kp_2[:, 1] = ((kp_2[:, 1] - kp_range[0]) / (kp_range[1] - kp_range[0])) * (width - 1)
+    kp_2.round_()
+    kp_2 = kp_2.detach().cpu().numpy()
+
+    img = transforms.ToPILImage()(image_tensor.cpu())
+    img = np.array(img)
+    cmap = color_map()
+    cm = cmap[:num_keypoints].astype(int)
+    for kp1, kp2, color in zip(kp_1, kp_2, cm):
+        c = color.item(0), color.item(1), color.item(2)
+        kp_1_coord = (int(kp1[1]), int(kp1[0]))
+        kp_2_coord = (int(kp2[1]), int(kp2[0]))
+        cv2.circle(img, kp_1_coord, radius, c, -1)
+        cv2.circle(img, kp_2_coord, radius, c, -1)
+        cv2.line(img, kp_1_coord, kp_2_coord, c, 1)
     return img
 
 

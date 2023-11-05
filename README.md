@@ -14,7 +14,7 @@
 ## Setup
 The Project setup is analog to the original DDLP setup: The README for the original repository can be found below
 ## Training
-## DDLP
+### DDLP
 To train DDLP on CALVIN use: `python train_ddlp.py --dataset calvin`
 
 (Model parameters and the datapath can be changed in `configs/calvin.json `)
@@ -22,13 +22,13 @@ To train DDLP on CALVIN use: `python train_ddlp.py --dataset calvin`
   <a target="_blank" href="https://uni-bielefeld.sciebo.de/s/LL7j7pHryvIMbRk">https://uni-bielefeld.sciebo.de/s/meuImSy6gCUVKQI</a>
 </p>
 
-## DLPv2
+### DLPv2
 To train DLPv2 on CALVIN use: `python train_dlp.py --dataset calvin`
 
 (Model parameters and the datapath can be changed in `configs/calvin-img.json `)
 
 ## Evaluation
-## DDLP Video prediction 
+### DDLP Video prediction 
 To generate vido preditions on CALVIN use:
 `python generate_ddlp_video_prediciton.py -d calvin -p ./checkpoints/calvin_ddlp -n 10 -c 5 --horizon 32`
 
@@ -41,7 +41,7 @@ To generate vido preditions on CALVIN use:
 The interactive GUI to test what-if predictions hasnt released yet (Nov 5)
 
 ## Results
-results of video predictions are found in `/results`
+results of video predictions can be found in `/results`
 
 
 ## deep-latent-particles-pytorch README:

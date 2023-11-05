@@ -34,7 +34,7 @@ class FgDLP(nn.Module):
         n_kp: number of kp to extract from each (!) patch
         n_kp_prior: number of kp to filter from the set of prior kp (of size n_kp x num_patches)
         n_kp_enc: number of posterior kp to be learned (this is the actual number of kp that will be learnt)
-        pad_mode: padding for the CNNs, 'zeros' or  'replicate' (default)
+        pad_mode: padding for the CNNs, 'zeros' or  'replicate' (default) 
         sigma: the prior std of the KP
         dropout: dropout for the CNNs. We don't use it though...
         patch_size: patch size for the prior KP proposals network (not to be confused with the glimpse size)
@@ -102,7 +102,7 @@ class FgDLP(nn.Module):
                                                              image_size,
                                                              cnn_channels=prior_channels,
                                                              margin=0, enable_attn=self.enable_enc_attn,
-                                                             attn_dropout=0.0)
+                                                             attn_dropout=0.0, ch=cdim)
 
         # object decoder
         self.object_dec = ObjectDecoderCNN(patch_size=(self.obj_patch_size, self.obj_patch_size), num_chans=4,
@@ -216,18 +216,19 @@ class FgDLP(nn.Module):
         obj_on_b = lobj_on_b.exp().clamp_min(1e-5)
 
 
-        # nans sometings detechted ????? 
+        # nans sometimes detechted ????? 
         if torch.isnan(obj_on_a).any():
             # print(f'obj_on_a has nan')
             # torch.nan_to_num(obj_on_a, nan=0.01)
             obj_on_a[torch.isnan(obj_on_a)] = 0.01
             print('NAN error  on  a')
+            raise SystemError('NaNs detected')
         if torch.isnan(obj_on_b).any():
             # print(f'obj_on_b has nan')
             # torch.nan_to_num(obj_on_b, nan=0.01)
             obj_on_b[torch.isnan(obj_on_b)] = 0.01
             print('NAN error  on  b')
-            #raise SystemError('NaNs detected')
+            raise SystemError('NaNs detected')
 
         #print('AAA 2:', obj_on_a)
         #print('BBB 2:', obj_on_a)
@@ -1085,6 +1086,7 @@ class ObjectDLP(nn.Module):
         self.bg_module = BgDLP(cdim=cdim, enc_channels=enc_channels, image_size=image_size, pad_mode=pad_mode,
                                dropout=dropout, learned_feature_dim=self.bg_learned_feature_dim, n_kp_enc=n_kp_enc,
                                use_resblock=self.use_resblock)
+        
         self.init_weights()
 
     def get_parameters(self, prior=True, encoder=True, decoder=True):
@@ -1668,7 +1670,7 @@ class ObjectDynamicsDLP(nn.Module):
                  kp_range=(-1, 1), kp_activation="tanh", anchor_s=0.25, predict_delta=True,
                  timestep_horizon=10, enable_enc_attn=False, use_correlation_heatmaps=True,
                  use_resblock=False, scale_std=0.3, offset_std=0.2, obj_on_alpha=0.1, obj_on_beta=0.1, pint_layers=6,
-                 pint_heads=8, pint_dim=256, filtering_heuristic='variance'):
+                 pint_heads=8, pint_dim=256, filtering_heuristic='variance', num_tasks=34):
         super(ObjectDynamicsDLP, self).__init__()
         """
         cdim: channels of the input image (3...)
@@ -1758,6 +1760,8 @@ class ObjectDynamicsDLP(nn.Module):
                                       n_head=self.pint_heads, n_layer=self.pint_layers, block_size=timestep_horizon,
                                       kp_activation=kp_activation, predict_delta=self.predict_delta, max_delta=1.0,
                                       positional_bias=True, max_particles=max_particles)
+        
+        # self.task_conditioning = nn.Linear(num_tasks, 32)
         self.init_weights()
 
     def get_parameters(self, prior=True, encoder=True, decoder=True, dynamics=True):
@@ -2507,6 +2511,7 @@ class ObjectDynamicsDLP(nn.Module):
         bg = bg_dict['bg_rec']
 
         # stitch
+
         rec = bg_mask * bg + dec_objects_trans
 
         # dynamics - all but the last timestep
@@ -2557,6 +2562,7 @@ class ObjectDynamicsDLP(nn.Module):
 
             mu_bg_features_dyn = None
             logvar_bg_features_dyn = None
+
 
         output_dict = {}
         output_dict['kp_p'] = kp_p

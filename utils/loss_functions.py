@@ -267,7 +267,6 @@ class VGGDistance(nn.Module):
     def forward(self, I1, I2, reduction='sum', only_image=False):
         b_sz = I1.size(0)
         num_ch = I1.size(1)
-
         if self.accumulate_mode == 'sum':
             loss = ((I1 - I2) ** 2).view(b_sz, -1).sum(1)
             # if normalized, effectively: (1 / (std ** 2)) * (I_1 - I_2) ** 2

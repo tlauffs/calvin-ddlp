@@ -195,10 +195,20 @@ def train_ddlp(config_path='./configs/balls.json'):
 
         pbar = tqdm(iterable=dataloader)
         for batch in pbar:
-            x = batch[0].to(device)
+            x = batch[0].to(device);
+
+            '''
+            x_annotations = batch[5].to(device)
+            x_annotations = x_annotations.unsqueeze(1).unsqueeze(3).unsqueeze(4)
+            conditioned_input = torch.cat([x, x_annotations.expand(-1, x.size(1), -1, 64, 64)], dim=2)
+            x = conditioned_input
+            '''
+
             x_prior = x  # the input image to the prior is the same as the posterior
-            noisy = (epoch < (warmup_epoch + 1))
-            # noisy = False
+
+            #noisy = (epoch < (warmup_epoch + 1))
+            noisy = False
+
             forward_dyn = (epoch >= start_epoch)  # forward through the dynamics module
             # forward pass
             model_output = model(x, x_prior=x_prior, warmup=(epoch < warmup_epoch), noisy=noisy, bg_masks_from_fg=False,

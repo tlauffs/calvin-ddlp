@@ -1,6 +1,6 @@
 {
     "ds": "calvin",
-    "root": "/media/tim/E/task_ABC_D",
+    "root": "/media/tim/E/datasets/task_D_D",
     "device": "cuda",
     "batch_size": 16,
     "lr": 0.0002,

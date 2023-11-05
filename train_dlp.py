@@ -174,6 +174,7 @@ def train_dlp(config_path='./configs/shapes.json'):
         pbar = tqdm(iterable=dataloader)
         for batch in pbar:
             x = batch[0].to(device)
+
             if len(x.shape) == 5 and not use_tracking:
                 # [bs, T, ch, h, w]
                 x = x.view(-1, *x.shape[2:])

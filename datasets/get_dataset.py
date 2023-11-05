@@ -5,14 +5,18 @@ from datasets.shapes_ds import generate_shape_dataset_torch
 from datasets.balls_ds import Balls, BallsImage
 from datasets.obj3d_ds import Obj3D, Obj3DImage
 from datasets.phyre_ds import PhyreDataset, PhyreDatasetImage
-from datasets.calvin_ds import CalvinDatasetImage, CalvinDataset
+from datasets.calvin_ds import CalvinDatasetImage, CalvinDataset, CalvinDatasetTasks
 #from datasets.langtable_ds import LanguageTableDataset, LanguageTableDatasetImage
 
 
 def get_video_dataset(ds, root, seq_len=1, mode='train', image_size=128):
     # load data
     if ds == "calvin":
-        dataset = CalvinDataset(data_path=root, image_size=image_size, mode=mode, sample_length=seq_len)
+        include_tasks = False
+        if include_tasks:
+            dataset = CalvinDatasetTasks(data_path=root, image_size=image_size, mode=mode, sample_length=seq_len)
+        else:
+            dataset = CalvinDataset(data_path=root, image_size=image_size, mode=mode, sample_length=seq_len)
     elif ds == "traffic":
         dataset = TrafficDataset(path_to_npy=root, image_size=image_size, mode=mode, sample_length=seq_len)
     elif ds == 'clevrer':

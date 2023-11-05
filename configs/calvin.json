@@ -1,6 +1,6 @@
 {
     "ds": "calvin",
-    "root": "/media/tim/E/task_ABC_D",
+    "root": "/media/tim/E/datasets/task_D_D",
     "device": "cuda",
     "batch_size": 2,
     "lr": 0.0002,
@@ -25,7 +25,7 @@
       -1,
       1
     ],
-    "warmup_epoch": 1,
+    "warmup_epoch": 0,
     "dropout": 0.0,
     "iou_thresh": 0.2,
     "anchor_s": 0.25,
@@ -71,5 +71,6 @@
     "animation_fps": 0.06,
     "use_correlation_heatmaps": true,
     "enable_enc_attn": false,
-    "filtering_heuristic": "variance"
+    "filtering_heuristic": "variance",
+    "use_tracking": true
   }

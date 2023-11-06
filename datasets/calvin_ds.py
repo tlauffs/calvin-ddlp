@@ -106,7 +106,7 @@ class CalvinDataset(Dataset):
     
 
 '''
-    Dataset for DLPv2 / includes tasks (one-hot-encoded)
+    Dataset for DDLP / includes tasks (one-hot-encoded)
     model still needs to be adjusted
 '''
 class CalvinDatasetTasks(Dataset):

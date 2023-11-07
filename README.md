@@ -38,6 +38,8 @@ To generate video preditions on CALVIN use:
 
 -c : number of conditoning frames
 
+--horizon : length of videos
+
 The interactive GUI to test what-if predictions hasnt released yet (Nov 5)
 
 ## Results

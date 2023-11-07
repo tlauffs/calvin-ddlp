@@ -29,7 +29,7 @@ To train DLPv2 on CALVIN use: `python train_dlp.py --dataset calvin`
 
 ## Evaluation
 ### DDLP Video prediction 
-To generate vido preditions on CALVIN use:
+To generate video preditions on CALVIN use:
 `python generate_ddlp_video_prediciton.py -d calvin -p ./checkpoints/calvin_ddlp -n 10 -c 5 --horizon 32`
 
 -p : path to checkpoint (.pth checkpoint must be inside a /saves folder)

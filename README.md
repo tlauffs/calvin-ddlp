@@ -44,7 +44,7 @@ The interactive GUI to test what-if predictions hasnt released yet (Nov 5)
 results of video predictions can be found in `/results`
 
 
-## deep-latent-particles-pytorch README:
+## Official ddlp-pytorch README:
 # ddlp-pytorch
 
 Official PyTorch implementation of the paper "DDLP: Unsupervised Object-centric Video Prediction with Deep Dynamic Latent
